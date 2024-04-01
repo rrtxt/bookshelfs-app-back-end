@@ -1,7 +1,7 @@
 const { nanoid } = require('nanoid')
 const books = require('./books')
 
-const AddNewBook = (request, h) => {
+const AddNewBookHandler = (request, h) => {
     const { name, year, author, summary, publisher,
         pageCount, readPage, reading } = request.payload
 
@@ -61,4 +61,41 @@ const AddNewBook = (request, h) => {
     }
 }
 
-module.exports = { AddNewBook }
+const GetAllBooksHandler = (request, h) => {
+    const response = h.response({
+        status: 'success',
+        data: {
+            books
+        }
+    })
+    response.code(200)
+    return response
+}
+
+const GetBookByIdHandler = (request, h) => {
+    const { bookId } = request.params
+
+    const book = books.filter((book) => book.id === bookId)[0]
+
+    if (!book) {
+        const response = h.response(
+            {
+                status: 'fail',
+                message: 'Buku tidak ditemukan'
+            }
+        )
+        response.code(404)
+        return response
+    }
+
+    const response = h.response({
+        status: 'success',
+        data: {
+            book
+        }
+    })
+    response.code(200)
+    return response
+}
+
+module.exports = { AddNewBookHandler, GetAllBooksHandler, GetBookByIdHandler }
