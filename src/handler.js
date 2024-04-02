@@ -62,11 +62,27 @@ const AddNewBookHandler = (request, h) => {
 }
 
 const GetAllBooksHandler = (request, h) => {
-    const allBooks = books.map((book) => ({
+    const { name, reading, finished } = request.query
+    let sortedBooks = books
+
+    if (name !== undefined) {
+        sortedBooks = books.filter((book) => book.name.toLowerCase().includes(name.toLowerCase()))
+    }
+
+    if (reading !== undefined) {
+        sortedBooks = books.filter((book) => book.reading === (reading == 1))
+    }
+
+    if (finished !== undefined) {
+        sortedBooks = books.filter((book) => book.finished === (finished == 1))
+    }
+
+    const allBooks = sortedBooks.map((book) => ({
         id: book.id,
         name: book.name,
         publisher: book.publisher
     }))
+
     const response = h.response({
         status: 'success',
         data: {
